@@ -1,14 +1,14 @@
-#ifndef PID_CONTROLLER_HPP
-#define PID_CONTROLLER_HPP
+#ifndef OFB_PIDCONTROLLER_H
+#define OFB_PIDCONTROLLER_H
 #include <Arduino.h>
 
 #ifdef ARDUINO_ARCH_ESP32
 #include <type_traits>
 #endif
 
-#include "timer.h"
+#include <OFB_Timer.h>
 
-
+namespace OFB {
 template <
     typename T_IN = float
 #ifdef ARDUINO_ARCH_ESP32
@@ -19,7 +19,7 @@ template <
     ,typename = typename std::enable_if<std::is_arithmetic<T_OUT>::value, T_OUT>::type
 #endif
 >
-class PidController {
+class PIDController {
 private:
     T_IN m_kp;
     T_IN m_ki;
@@ -37,7 +37,7 @@ private:
     uint16_t m_sample_time;
 
 public:
-    PidController(
+    PIDController(
         T_IN target_value,
         T_OUT vmax,
         uint16_t sample_time
@@ -83,18 +83,19 @@ public:
 
     inline void set_sample_time(uint16_t stime){ m_sample_time = stime; }
 
-    inline T_IN kp() { return m_kp; }
-    inline T_IN ki() { return m_ki; }
-    inline T_IN kd() { return m_kd; }
+    inline T_IN kp() const { return m_kp; }
+    inline T_IN ki() const { return m_ki; }
+    inline T_IN kd() const { return m_kd; }
 
     inline void set_kp(T_IN kp){ m_kp = kp; }
     inline void set_ki(T_IN ki){ m_ki = ki; }
     inline void set_kd(T_IN kd){ m_kd = kd; }
 
-    inline T_IN target_value() { return m_target_value; }
+    inline T_IN target_value() const { return m_target_value; }
     inline void set_target_value(T_IN target_value) { m_target_value = target_value; }
 
-    inline T_OUT current_output_value() { return m_output; }
+    inline T_OUT current_output_value() const { return m_output; }
 };
 
+} // end namespace OFB
 #endif
